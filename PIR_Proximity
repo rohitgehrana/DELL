@@ -4,28 +4,36 @@ import time
 # Set the GPIO mode
 GPIO.setmode(GPIO.BOARD)
 
-# Define the GPIO pin to which the PIR sensor is connected
-pir_pin = 7
+# Define the GPIO pin to which the IR proximity sensor is connected
+ir_sensor_pin = 18
 
-# Setup the PIR sensor pin as an input
-GPIO.setup(pir_pin, GPIO.IN)
+# Set up the GPIO pin for input
+GPIO.setup(ir_sensor_pin, GPIO.IN)
+
+# Function to stop speaking
+def stop_speaking():
+    print("Hand detected, stopping speech")
+    # Add code here to stop the speech or perform any desired action
+
+# Function to resume speaking
+def resume_speaking():
+    print("Hand removed, resuming speech")
+    # Add code here to resume the speech or perform any desired action
 
 try:
-    print("PIR Sensor Test (CTRL+C to exit)")
-    
     while True:
-        # Read the value from the PIR sensor
-        pir_value = GPIO.input(pir_pin)
-        
-        if pir_value == GPIO.HIGH:
-            print("Detected")
+        # Read the digital value from the IR proximity sensor
+        sensor_value = GPIO.input(ir_sensor_pin)
+
+        # Depending on the behavior of your sensor, you might need to adjust the condition
+        # to match the specific digital output indicating the presence of a hand
+        if sensor_value == GPIO.LOW:
+            stop_speaking()
         else:
-            print("Not Detected")
-        
-        time.sleep(1)
+            resume_speaking()
+
+        time.sleep(0.5)  # Wait for a short duration before taking the next reading
 
 except KeyboardInterrupt:
-    print("Exiting...")
-finally:
-    # Cleanup GPIO settings
+    print("Program stopped by the user")
     GPIO.cleanup()
