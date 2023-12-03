@@ -3,7 +3,7 @@ import time
 
 # GPIO pins for flame sensor and infrared sensor
 FLAME_SENSOR_PIN = 18  # You can change this to the actual GPIO pin you are using for the flame sensor
-IR_SENSOR_PIN = 18     # You can change this to the actual GPIO pin you are using for the IR sensor
+IR_SENSOR_PIN = 3     # You can change this to the actual GPIO pin you are using for the IR sensor
 
 # GPIO pin for the pump (replace with your actual pump pin)
 PUMP_PIN = 23
