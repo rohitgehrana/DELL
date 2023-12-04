@@ -1,51 +1,26 @@
-import pyaudio
-import wave
+import sounddevice as sd
+from pydub import AudioSegment
+from pydub.playback import play
 
-# Set the chunk size to 1024 samples
-CHUNK = 1024
+def record_and_save_to_mp3(pin=7, duration=5, fs=44100, output_file="output.mp3"):
+    print(f"Recording from microphone on pin {pin}...")
+    audio_data = sd.rec(int(duration * fs), samplerate=fs, channels=1, dtype='int16')
+    sd.wait()
 
-# Open the output file in write binary mode
-wf = wave.open('output.mp3', 'wb')
+    # Convert audio data to AudioSegment
+    audio_segment = AudioSegment(
+        audio_data.tobytes(),
+        frame_rate=fs,
+        sample_width=audio_data.dtype.itemsize,
+        channels=1
+    )
 
-# Set the number of channels
-wf.setnchannels(1)
+    # Save to MP3 file
+    audio_segment.export(output_file, format="mp3")
+    print(f"Audio recorded successfully. Saved to {output_file}")
 
-# Set the sample width to 2 bytes
-wf.setsampwidth(2)
+    # Play back the recorded audio
+    play(audio_segment)
 
-# Set the frame rate to 44100 frames per second
-wf.setframerate(44100)
-
-# Initialize PyAudio
-p = pyaudio.PyAudio()
-
-# Open an input stream
-stream = p.open(format=pyaudio.paInt16,
-                channels=1,
-                rate=44100,
-                input=True,
-                frames_per_buffer=CHUNK)
-
-# Start recording
-print('Recording...')
-
-# Read data from the stream and write it to the output file
-data = stream.read(CHUNK)
-while data != b'':
-    wf.writeframes(data)
-    data = stream.read(CHUNK)
-
-# Stop recording
-print('Recording stopped.')
-
-# Stop the stream and close PyAudio
-stream.stop_stream()
-stream.close()
-p.terminate()
-
-# Close the output file
-wf.close()
-
-# Print a success message
-print('Audio recorded successfully.')
-
+if __name__ == "__main__":
+    record_and_save_to_mp3(pin=7, duration=5)
